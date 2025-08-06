@@ -10,15 +10,12 @@ const {
 const { protect } = require("../middleware/auth");
 
 // Routes
-router
-  .route("/")
-  .post(protect, addToCart)
-  .get(protect, getCart)
-  .delete(protect, clearCart);
+router.route("/").post(protect, addToCart).get(protect, getCart);
 
 router
-  .route("/item/:productId")
+  .route("/item/:itemId")
   .put(protect, updateCartItem)
   .delete(protect, removeCartItem);
 
+router.route("/clear").delete(protect, clearCart);
 module.exports = router;

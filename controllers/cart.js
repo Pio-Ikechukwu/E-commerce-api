@@ -66,13 +66,13 @@ exports.clearCart = async (req, res) => {
 // @access  Private
 exports.updateCartItem = async (req, res) => {
   const userId = req.user.id;
-  const { productId } = req.params;
+  const { itemId } = req.params;
   const { quantity } = req.body;
 
   const cart = await Cart.findOne({ user: userId });
   if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-  const item = cart.items.find((item) => item.product.toString() === productId);
+  const item = cart.items.find((item) => item.product.toString() === itemId);
   if (!item) return res.status(404).json({ message: "Item not in cart" });
 
   if (quantity <= 0) {
@@ -91,12 +91,12 @@ exports.updateCartItem = async (req, res) => {
 // @access  Private
 exports.removeCartItem = async (req, res) => {
   const userId = req.user.id;
-  const { productId } = req.params;
+  const { itemId } = req.params;
 
   const cart = await Cart.findOne({ user: userId });
   if (!cart) return res.status(404).json({ message: "Cart not found" });
   const updatedItems = cart.items.filter(
-    (item) => item.product.toString() !== productId
+    (item) => item.product.toString() !== itemId
   );
 
   if (updatedItems.length === cart.items.length) {
