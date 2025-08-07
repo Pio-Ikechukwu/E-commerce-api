@@ -8,13 +8,13 @@ const {
   createProduct,
 } = require("../controllers/product");
 
-const { protect } = require("../middleware/auth");
-router.route("/").get(getAllProducts).post(protect, createProduct);
+const { protect, admin } = require("../middleware/auth");
+router.route("/").get(getAllProducts).post(protect, admin, createProduct);
 
 router
   .route("/:id")
   .get(getSingleProduct)
-  .put(protect, updateProduct)
-  .delete(protect, deleteProduct);
+  .put(protect, admin, updateProduct)
+  .delete(protect, admin, deleteProduct);
 
 module.exports = router;
