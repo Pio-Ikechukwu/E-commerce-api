@@ -40,7 +40,7 @@ const OrderSchema = new mongoose.Schema({
   shippingAddress: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",
-    // required: true,
+    required: true,
   },
   createdAt: {
     type: Date,

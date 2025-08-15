@@ -24,7 +24,10 @@ const CartSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  items: [CartItemSchema],
+  items: {
+    type: CartItemSchema,
+    required: true,
+  },
   totalItems: {
     type: Number,
     default: 0,

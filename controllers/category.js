@@ -2,16 +2,16 @@ const Category = require("../models/Category");
 
 // @desc      Create new category
 // @route     POST/api/v1/categories
-// @access    Private(admin)
+// @access    Admin
 exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
 
     const category = await Category.create({ name });
 
-    res.status(201).json({ success: true, data: category });
+    return res.status(201).json({ success: true, data: category });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to create category. Try again.",
     });
@@ -24,9 +24,9 @@ exports.createCategory = async (req, res) => {
 exports.getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find();
-    res.status(200).json({ success: true, data: categories });
+    return res.status(200).json({ success: true, data: categories });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch all categories. Try again",
     });
@@ -45,9 +45,9 @@ exports.getSingleCategory = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Category not found" });
     }
-    res.status(200).json({ success: true, data: category });
+    return res.status(200).json({ success: true, data: category });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch the category. Try again",
     });
@@ -56,7 +56,7 @@ exports.getSingleCategory = async (req, res) => {
 
 // @desc      Update category
 // @route     PUT/api/v1/categories/:id
-// @access    Private(admin)
+// @access    Admin
 exports.updateCategory = async (req, res) => {
   try {
     const { name } = req.body;
@@ -72,9 +72,9 @@ exports.updateCategory = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Category not found" });
     }
-    res.status(200).json({ success: true, data: category });
+    return res.status(200).json({ success: true, data: category });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to update the category. Try again",
     });
@@ -83,15 +83,15 @@ exports.updateCategory = async (req, res) => {
 
 // @desc      Delete category
 // @route     DELETE/api/v1/categories/:id
-// @access    Private(admin)
+// @access    Admin
 exports.deleteCategory = async (req, res) => {
   try {
     const category = await Category.findByIdAndDelete(req.params.id);
 
     if (!category) {
-      res.status(404).json({ success: false, message: "Category not found" });
+      return res.status(404).json({ success: false, message: "Category not found" });
     }
-    res.status(200).json({ success: true, message: "Successfully deleted" });
+    return res.status(200).json({ success: true, message: "Successfully deleted" });
   } catch (err) {
     res.status(500).json({
       success: false,

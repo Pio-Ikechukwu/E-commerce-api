@@ -2,16 +2,16 @@ const Product = require("../models/Product");
 
 // @desc    Create new product
 // @route   POST /api/products
-// @access  Private (admin)
+// @access  Admin
 exports.createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
-    res
-      .status(201)
-      .json({ success: true, count: product.length, data: product });
+    return res.status(201).json({ success: true, data: product });
   } catch (err) {
     console.log("Create product error:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server error" });
   }
 };
 
@@ -21,9 +21,9 @@ exports.createProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().populate("categoryId", "name");
-    res.status(200).json({ success: true, data: products });
+    return res.status(200).json({ success: true, data: products });
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ success: false, message: "Failed to fetch products" });
   }
@@ -42,9 +42,9 @@ exports.getSingleProduct = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
-    res.status(200).json({ success: true, data: product });
+    return res.status(200).json({ success: true, data: product });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Something went wrong. Check ur input and try again",
     });
@@ -64,9 +64,11 @@ exports.updateProduct = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
-    res.status(200).json({ success: true, data: product });
+    return res.status(200).json({ success: true, data: product });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Something went wrong." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong." });
   }
 };
 
@@ -80,9 +82,9 @@ exports.deleteProduct = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
-    res.status(200).json({ success: true, message: "Product deleted" });
+    return res.status(200).json({ success: true, message: "Product deleted" });
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ success: false, message: "Product failed to delete" });
   }

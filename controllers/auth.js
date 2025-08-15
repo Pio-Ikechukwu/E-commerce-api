@@ -2,9 +2,12 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+// @desc      Register user
+// @route     POST api/auth/register
+// @access    Public
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, shippingAddress } = req.body;
 
     // Check for existing user
     const existingUser = await User.findOne({ email });
@@ -20,24 +23,30 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: "customer",
+      role,
+      shippingAddress: [],
     });
 
-    res.status(201).json({
-      message: "User registered",
+    return res.status(201).json({
+      success: true,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
+        shippingAddress,
       },
     });
   } catch (err) {
     console.error("Register error:", err);
-    res.status(500).json({ message: "Internal error during registration" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal error during registration" });
   }
 };
 
-// Login user
+// @desc        Login user
+// @route       POST api/auth/login
+// @access      Public
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,17 +54,21 @@ exports.loginUser = async (req, res) => {
     if (!email || !password) {
       return res
         .status(400)
-        .json({ message: "Please provide email and password" });
+        .json({ success: false, message: "Please provide email and password" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
@@ -66,18 +79,57 @@ exports.loginUser = async (req, res) => {
       }
     );
 
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
       userId: user._id,
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Server error during login" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error during login" });
   }
 };
 
-// Logout
+// @desc      Logout
+// @route     POST api/auth/logout
 exports.logoutUser = (req, res) => {
-  res.status(200).json({ message: "Logged out successfully" });
+  return res
+    .status(200)
+    .json({ success: true, message: "Logged out successfully" });
+};
+
+// @desc      Forgot password
+// @route     GET /api/users/forgotPassword
+// @access    Public
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: true, message: "No user found with that email" });
+    }
+
+    const resetToken = user.generateResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/auth/reset-password/${resetToken}`;
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Reset link", resetUrl });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    return res
+      .status(500)
+      .json({ success: true, message: "Something went wrong" });
+  }
 };

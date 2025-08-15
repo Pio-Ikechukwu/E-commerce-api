@@ -15,6 +15,7 @@ const product = require("./routes/product");
 const category = require("./routes/category");
 const cart = require("./routes/cart");
 const order = require("./routes/order");
+const address = require("./routes/address");
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use("/api/products", product);
 app.use("/api/categories", category);
 app.use("/api/cart", cart);
 app.use("/api/orders", order);
+app.use("/api/addresses", address);
 
 // Start Server
 const PORT = process.env.PORT || 5000;

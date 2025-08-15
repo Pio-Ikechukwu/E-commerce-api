@@ -31,7 +31,7 @@ const protect = async (req, res, next) => {
   }
 };
 
-//  Admin-only middleware
+// Admin-only middleware
 const admin = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     return next();

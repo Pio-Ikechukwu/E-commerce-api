@@ -7,7 +7,7 @@ const {
   updateCartItem,
   removeCartItem,
 } = require("../controllers/cart");
-const { protect, admin } = require("../middleware/auth");
+const { protect } = require("../middleware/auth");
 
 // Routes
 router.route("/").post(protect, addToCart).get(protect, getCart);
